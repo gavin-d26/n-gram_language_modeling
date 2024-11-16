@@ -13,6 +13,7 @@ class NGramModel:
         self.n_minus_grams = {}
         self.laplace_smoothing = laplace_smoothing
         self.min_token_counts=min_token_counts
+        self.corpus_size=0
         
     
     def fit(self, inputs):
@@ -35,6 +36,10 @@ class NGramModel:
         df['sentence'] = df['sentence'].str.split(' ')
         df['sentence'] = df['sentence'].apply(lambda sentence: [token if token in self.vocab_counts else "<UNK>" for token in sentence])
         df['sentence'].apply(lambda x: self.generate_ngram_posteriors(x, self.n))
+        
+        for k,v in self.vocab_counts.items():
+            if k!="<START>":
+                self.corpus_size+=v
         # self.vocab = [word for word in self.vocab_counts.keys() if word!="<START>"]
         
         
@@ -64,13 +69,13 @@ class NGramModel:
     
     def compute_prob_for_ngram(self, n_gram):
         n_gram_counts = self.n_grams.get(n_gram, 0)
-        n_minus_gram_counts = self.n_minus_grams.get(n_gram[:-1], 0) if self.n>1 else len(self.vocab)
+        n_minus_gram_counts = self.n_minus_grams.get(n_gram[:-1], 0) if self.n>1 else self.corpus_size
         if n_gram_counts==0:
             pass
         if n_minus_gram_counts==0:
             pass
         if self.laplace_smoothing>0:
-            return (n_gram_counts+self.laplace_smoothing)/(n_minus_gram_counts + len(self.vocab))
+            return (n_gram_counts+self.laplace_smoothing)/(n_minus_gram_counts + len(self.vocab)*self.laplace_smoothing)
         else:
             return n_gram_counts/n_minus_gram_counts
     
@@ -87,9 +92,7 @@ class NGramModel:
         log_probs = []
         for sentence in inputs:
             log_probs.extend(self.predict_probs_for_sentence(sentence))
-        
-        log_probs = np.log2(log_probs)
-        perplexity = np.exp2(-np.mean(log_probs))
+        perplexity = np.exp2(-np.mean(np.log2(log_probs)))
         return perplexity
     
 
@@ -111,8 +114,8 @@ if __name__=="__main__":
         dev_data = f.readlines()
     
     
-    model = NGramModel(3, laplace_smoothing=1, min_token_counts=3)
+    model = NGramModel(1, laplace_smoothing=0, min_token_counts=3)
     model.fit(train_data)
-    print(model.predict_probs_for_sentence("HDTV ."))
+    print(model.compute_perplexity(["HDTV ."]))
     print(model.compute_perplexity(dev_data))
     
