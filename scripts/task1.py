@@ -231,7 +231,13 @@ if __name__ == "__main__":
         file=output_path,
     )
 
-    # test bigram model on train data and dev data
+    print(
+        "unigram - test perplexity: ",
+        unigram.compute_perplexity(unigram.compute_probs_for_corpus(test_data)),
+        file=output_path,
+    )
+
+    # test bigram model on train data and dev data and test data
     print(
         "bigram - train perplexity: ",
         bigram.compute_perplexity(bigram.compute_probs_for_corpus(train_data)),
@@ -243,7 +249,13 @@ if __name__ == "__main__":
         file=output_path,
     )
 
-    # test trigram model on train data and dev data
+    print(
+        "bigram - test perplexity: ",
+        bigram.compute_perplexity(bigram.compute_probs_for_corpus(test_data)),
+        file=output_path,
+    )
+
+    # test trigram model on train data and dev data and test data
     print(
         "trigram - train perplexity: ",
         trigram.compute_perplexity(trigram.compute_probs_for_corpus(train_data)),
@@ -252,6 +264,12 @@ if __name__ == "__main__":
     print(
         "trigram - dev perplexity: ",
         trigram.compute_perplexity(trigram.compute_probs_for_corpus(dev_data)),
+        file=output_path,
+    )
+
+    print(
+        "trigram - test perplexity: ",
+        trigram.compute_perplexity(trigram.compute_probs_for_corpus(test_data)),
         file=output_path,
     )
 
