@@ -94,6 +94,7 @@ class NGramModel:
         ]
         return ngrams
 
+    # function to compute probability for a given n-gram
     def compute_prob_for_ngram(self, n_gram):
         n_gram_counts = self.n_grams.get(n_gram, 0)
         n_minus_gram_counts = (
@@ -312,7 +313,9 @@ if __name__ == "__main__":
         file=output_path,
     )
 
-    # if you use half of the training data, would it increase or decrease the perplexity on previously unseen data? Why? Provide empirical experimental evidence if necessary.
+    # Q) if you use half of the training data, would it increase or decrease the perplexity on previously unseen data?
+    # Why? Provide empirical experimental evidence if necessary.
+
     print("-" * 50, file=output_path)
 
     # train unigram model with half of the training data
@@ -339,7 +342,7 @@ if __name__ == "__main__":
         file=output_path,
     )
 
-    # if you convert all tokens that appeared less then 5 times to <unk> (a special symbol for out-of-vocabulary
+    # Q) if you convert all tokens that appeared less then 5 times to <unk> (a special symbol for out-of-vocabulary
     # tokens), would it increase or decrease the perplexity on the previously unseen data compared to an ap-
     # proach that converts only a fraction of words that appeared just once to <unk>? Why? Provide empirical
     # experimental evidence if necessary.
